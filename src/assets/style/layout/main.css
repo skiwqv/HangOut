@@ -1,0 +1,26 @@
+.main {
+    margin-left: 72px;
+    display: grid;
+    grid-template-columns: 1fr 320px;
+    min-height: 100vh;
+}
+
+.feed-col {
+    padding: 28px 28px 28px 28px;
+    border-right: 1px solid var(--border);
+}
+
+.right-col {
+    padding: 28px 24px;
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    overflow-y: auto;
+    scrollbar-width: none;
+    background: var(--bg2);
+    border-left: 1px solid var(--border);
+}
+
+.right-col::-webkit-scrollbar {
+    display: none;
+}
