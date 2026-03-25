@@ -10,7 +10,7 @@ export interface UpcomingActivity {
 
 export interface User {
   id: string
-  name: string
+  username: string
   handle: string
   city: string
   initials: string

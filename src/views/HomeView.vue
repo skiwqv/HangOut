@@ -1,5 +1,9 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref,computed } from 'vue'
+import { useRouter } from 'vue-router'
+import { useAuthStore } from '@/stores/auth'
+import { LayoutGrid, Menu, MessageSquare, Bell } from '@lucide/vue'
+
 import MainLayout from '@/layouts/MainLayout.vue'
 import AppSidebar from '@/components/layout/AppSidebar.vue'
 import FeedHeader from '@/components/FeedHeader.vue'
@@ -11,13 +15,24 @@ import TelegramBanner from '@/components/TelegramBanner.vue'
 import LoginForm from '@/components/LoginForm.vue'
 import AuthModal from '@/components/AuthModal.vue'
 import type { Activity } from '@/types/activity'
+
 import type { User } from '@/types/user'
-import { useAuthStore } from '@/stores/auth'
+import type { RegisterPayload,LoginPayload } from '@/types/auth'
+import type { NavItem } from '@/types/nav'
+
 
 const authStore = useAuthStore()
+const router = useRouter()
 
 const activeTag = ref('✦ Все')
 const filterTags = ['✦ Все', '🎮 Игры', '🏃 Спорт', '🎲 Настолки', '🎬 Кино', '🍕 Еда', '🎵 Музыка']
+
+const allNavItems: NavItem[] = [
+  { id: 'feed',          title: 'Лента',          icon: LayoutGrid },
+  { id: 'activities',    title: 'Мои активности', icon: Menu,      requiresAuth: true },
+  { id: 'chats',         title: 'Чаты',            icon: MessageSquare,  requiresAuth: true },
+  { id: 'notifications', title: 'Уведомления',    icon: Bell,           requiresAuth: true, hasNotif: false },
+]
 
 const authModal = ref<'closed' | 'login' | 'register'>('closed')
 
@@ -83,48 +98,40 @@ const activities: Activity[] = [
   },
 ]
 
-async function handleLogin(email: string, password: string) {
-  console.log('data Login', email, password);
-  authModal.value = 'closed'
+const activeId = ref('feed')
+
+async function handleSubmit(data: RegisterPayload) {
+  if (authModal.value === 'login') {
+    await handleLogin({ email: data.email, password: data.password });
+  } else {
+    await handleRegister(data);
+  }
 }
 
-async function handleRegister(email: string, password: string) {
-  // await authStore.register(email, password)
-  console.log('data Login', email, password);
-  authModal.value = 'closed'
+async function handleLogin(payload: LoginPayload) {
+  await authStore.login(payload);
+  authModal.value = 'closed';
+}
+
+async function handleRegister(payload: RegisterPayload) {
+  await authStore.register(payload);
+  authModal.value = 'closed';
+}
+
+const routeToCreate = () => {
+  router.push('/create')
 }
 
 
-const currentUser: User = {
-  id: '1',
-  name: 'Алексей',
-  handle: 'alexdev',
-  city: 'Харьков',
-  initials: 'A',
-  stats: { organized: 12, participated: 34, rating: 4.8 },
-  reliability: 97,
-  tags: ['#minecraft', '#valorant', '#настолки', '#cs2', '#спорт'],
-  upcoming: [
-    {
-      id: '1',
-      title: 'Minecraft с Alex',
-      emoji: '⛏️',
-      iconBg: 'rgba(124,58,237,0.15)',
-      dotColor: 'var(--mint)',
-      datetime: 'Сегодня в 20:00',
-      format: 'online',
-    },
-    {
-      id: '2',
-      title: 'Настолки в антикафе',
-      emoji: '🎲',
-      iconBg: 'rgba(245,158,11,0.15)',
-      dotColor: 'var(--yellow)',
-      datetime: 'Суббота в 15:00',
-      format: 'offline',
-    },
-  ],
-}
+const currentUser = computed(() => authStore.user)
+
+const visibleItems = computed(() => {
+  return allNavItems.filter(item => {
+    if (item.requiresAuth && !currentUser.value) return false
+    return true
+  })
+})
+
 </script>
 
 <template>
@@ -132,45 +139,11 @@ const currentUser: User = {
   
   <MainLayout>
     <template #sidebar>
-      <AppSidebar>
-        <!-- SVG иконки через слоты -->
-        <template #feed>
-          <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-            <rect x="3" y="3" width="7" height="7" rx="1" />
-            <rect x="14" y="3" width="7" height="7" rx="1" />
-            <rect x="3" y="14" width="7" height="7" rx="1" />
-            <rect x="14" y="14" width="7" height="7" rx="1" />
-          </svg>
-        </template>
-        <template #activities>
-          <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-            <path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01" />
-          </svg>
-        </template>   
-        <template #chats>
-          <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
-          </svg>
-        </template>  
-        <template #notifications>
-          <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-            <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
-            <path d="M13.73 21a2 2 0 0 1-3.46 0" />
-          </svg>
-        </template>
-        <template #settings>
-          <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-            <circle cx="12" cy="12" r="3" />
-            <path
-              d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" />
-          </svg>
-        </template>                              
-      </AppSidebar>
+      <AppSidebar v-model="activeId" :items="visibleItems" />
     </template>
   
-    <!-- Feed -->
     <div class="feed-col">
-      <FeedHeader @create="() => {}" />
+      <FeedHeader @create="routeToCreate" />
       <TagsFilter :tags="filterTags" :active="activeTag" @update="activeTag = $event" />
       <div class="section-label">🔥 Сейчас горячее</div>
       <div class="cards-grid">
@@ -178,11 +151,13 @@ const currentUser: User = {
       </div>
     </div>
   
-    <!-- Right panel -->
     <div class="right-col" v-if="currentUser">
       <UserProfile :user="currentUser" />
       <div class="section-title">Скоро у меня <a>Все →</a></div>
-      <UpcomingItem v-for="item in currentUser.upcoming" :key="item.id" :item="item" />
+      <template v-if="currentUser?.upcoming?.length">
+        <UpcomingItem v-for="item in currentUser.upcoming" :key="item.id" :item="item" />
+      </template>
+      <span v-else class="section-text">Пока нет запланированных активностей {{ ':(' }}</span>
       <TelegramBanner />
     </div>
     <div class="right-col" v-else>
@@ -191,12 +166,14 @@ const currentUser: User = {
         @register="authModal = 'register'"
       />
     </div>
-    <AuthModal
-      v-if="authModal !== 'closed'"
-      :mode="authModal"
-      @submit="(email, password) => authModal === 'login' ? handleLogin(email, password) : handleRegister(email, password)"
-      @close="authModal = 'closed'"
-      @switch="authModal = authModal === 'login' ? 'register' : 'login'"
-    />    
+    <Transition name="modal">
+      <AuthModal
+        v-if="authModal !== 'closed'"
+        :mode="authModal"
+        @submit="handleSubmit"
+        @close="authModal = 'closed'"
+        @switch="authModal = authModal === 'login' ? 'register' : 'login'"
+      />    
+    </Transition>
   </MainLayout>
 </template>
