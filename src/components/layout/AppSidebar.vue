@@ -1,14 +1,31 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import type { NavItem } from '@/types/nav'
+import { useAuthStore } from '@/stores/auth';
+import { Settings, LogOut } from '@lucide/vue'
+import { ref,onMounted, onUnmounted } from 'vue';
 
-const activeItem = ref('feed')
+defineProps<{
+  items: NavItem[]
+  modelValue: string
+}>()
 
-const navItems = [
-  { id: 'feed',         title: 'Лента' },
-  { id: 'activities',   title: 'Мои активности' },
-  { id: 'chats',        title: 'Чаты' },
-  { id: 'notifications',title: 'Уведомления', hasNotif: true },
-]
+const emit = defineEmits<{
+  'update:modelValue': [id: string]
+}>()
+
+const authStore = useAuthStore()
+
+const isSettingsOpen = ref(false)
+const settingsBtn = ref<HTMLElement | null>(null)
+
+const closeSettings = (e: MouseEvent) => {
+  if (isSettingsOpen.value && settingsBtn.value && !settingsBtn.value.contains(e.target as Node)) {
+    isSettingsOpen.value = false
+  }
+}
+
+onMounted(() => window.addEventListener('click', closeSettings))
+onUnmounted(() => window.removeEventListener('click', closeSettings))
 </script>
 
 <template>
@@ -16,25 +33,48 @@ const navItems = [
     <div class="logo">H</div>
 
     <div
-      v-for="item in navItems"
+      v-for="item in items"
       :key="item.id"
       class="nav-item"
-      :class="{ active: activeItem === item.id }"
+      :class="{ active: modelValue === item.id }"
       :title="item.title"
-      @click="activeItem = item.id"
+      @click="emit('update:modelValue', item.id)"
     >
-      <slot :name="item.id" />
+      <component :is="item.icon" :size="20" />
+      
       <div v-if="item.hasNotif" class="notif-dot" />
     </div>
 
     <div class="nav-spacer" />
 
-    <div class="nav-item" title="Настройки">
-      <slot name="settings" />
-    </div>
-
-    <div class="avatar-nav">
-      <slot name="avatar">A</slot>
+  <div 
+      ref="settingsBtn"
+      class="nav-item settings-trigger" 
+      :class="{ active: isSettingsOpen }"
+      @click.stop="isSettingsOpen = !isSettingsOpen"
+      title="Настройки"
+      v-if="authStore.token"
+    >
+      <Settings :size="20" />
+      
+      <Teleport to="body">
+        <Transition name="popover">
+          <div v-if="isSettingsOpen" class="settings-popover">
+            <div class="popover-header">Настройки</div>
+            <div class="popover-content">
+              <slot name="settings-menu">
+                <div class="menu-item">Профиль</div>
+                <div class="menu-item">Тема: Темная</div>
+                <div class="menu-item">Язык: RU</div>
+                <div class="menu-divider" />
+                <div class="menu-item logout" @click="authStore.logout()">Выйти
+                  <LogOut :size="13"></LogOut>
+                </div>
+              </slot>
+            </div>
+          </div>
+        </Transition>
+      </Teleport>
     </div>
   </nav>
 </template>

@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { AlertCircle } from '@lucide/vue';
 const emit = defineEmits<{
   login: []
   register: []
@@ -34,10 +35,7 @@ const emit = defineEmits<{
     </div>
 
     <div class="guest-hint">
-      <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="color:var(--purple2);flex-shrink:0">
-        <circle cx="12" cy="12" r="10"/>
-        <path d="M12 8v4m0 4h.01"/>
-      </svg>
+      <AlertCircle :size="32" color="var(--purple)" />
       <span>После входа вы сможете вступать в активности и создавать свои</span>
     </div>
   </div>

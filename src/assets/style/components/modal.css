@@ -127,3 +127,117 @@
 .modal-switch span:hover {
     text-decoration: underline;
 }
+
+.field-input--error {
+    border-color: var(--red);
+}
+
+.field-error {
+    font-size: 11px;
+    color: var(--red);
+    margin-top: 4px;
+    display: block;
+}
+
+.modal-enter-active {
+    transition: opacity 0.2s ease;
+}
+
+.modal-leave-active {
+    transition: opacity 0.2s ease;
+}
+
+.modal-enter-from,
+.modal-leave-to {
+    opacity: 0;
+}
+
+.modal-enter-active .modal {
+    transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.modal-enter-from .modal {
+    opacity: 0;
+    transform: translateY(16px) scale(0.97);
+}
+
+/* Стили для триггера */
+.settings-trigger {
+  position: relative;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+
+.settings-trigger.active {
+  color: var(--accent-color, #4f46e5); /* Цвет при открытом окне */
+}
+
+.settings-popover {
+  position: fixed;
+  bottom: 80px;
+  left: 70px;  
+  width: 240px;
+  background: var(--bg3);
+  backdrop-filter: blur(12px);         
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  border-radius: 12px;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+  padding: 12px;
+  z-index: 9999;
+}
+
+/* Для темной темы (если есть) */
+@media (prefers-color-scheme: dark) {
+  .settings-popover {
+    background: var(--bg3);
+    border-color: rgba(255, 255, 255, 0.1);
+    color: #eee;
+  }
+}
+
+.popover-header {
+  font-weight: 600;
+  margin-bottom: 12px;
+  padding: 0 8px;
+  font-size: 14px;
+  opacity: 0.6;
+}
+
+.menu-item {
+  padding: 10px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background 0.2s;
+}
+
+.menu-item:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.menu-divider {
+  height: 1px;
+  background: rgba(255, 255, 255, 0.2);
+  margin: 8px 0;
+}
+
+.logout {
+  color: #ef4444;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+.logout:hover{
+     background: rgba(255, 0, 0, 0.1);
+}
+/* Анимация появления */
+.popover-enter-active,
+.popover-leave-active {
+  transition: all 0.2s ease-out;
+}
+
+.popover-enter-from,
+.popover-leave-to {
+  opacity: 0;
+  transform: translateY(10px) scale(0.95);
+}

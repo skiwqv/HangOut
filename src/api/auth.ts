@@ -1,30 +1,29 @@
 import api from './index'
 import type { User } from '@/types/user'
-
-interface LoginPayload {
-  email: string
-  password: string
-}
+import type { RegisterPayload, LoginPayload } from '@/types/auth'
 
 interface AuthResponse {
-  token: string
-  user: User
+  access_token: string
 }
 
 export const authApi = {
   login(payload: LoginPayload) {
-    return api.post<AuthResponse>('/auth/login', payload)
+    return api.post<AuthResponse>('/user/login', payload)
   },
 
-  register(payload: LoginPayload & { name: string }) {
-    return api.post<AuthResponse>('/auth/register', payload)
+  register(payload: RegisterPayload) {
+    return api.post<AuthResponse>('/user/register', payload)
   },
 
   logout() {
-    return api.post('/auth/logout')
+    return api.post('/user/logout')
   },
 
   me() {
-    return api.get<User>('/auth/me')
+    return api.get<User>('/user/me')
+  },
+
+  refresh() {
+    return api.post('/user/refresh')
   },
 }
