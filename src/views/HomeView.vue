@@ -1,40 +1,18 @@
 <script setup lang="ts">
-import { ref,computed } from 'vue'
+import { ref } from 'vue'
 import { useRouter } from 'vue-router'
-import { useAuthStore } from '@/stores/auth'
-import { LayoutGrid, Menu, MessageSquare, Bell } from '@lucide/vue'
 
 import MainLayout from '@/layouts/MainLayout.vue'
-import AppSidebar from '@/components/layout/AppSidebar.vue'
 import FeedHeader from '@/components/FeedHeader.vue'
 import TagsFilter from '@/components/TagsFilter.vue'
 import ActivityCard from '@/components/ActivityCard.vue'
-import UserProfile from '@/components/UserProfile.vue'
-import UpcomingItem from '@/components/UpcomingItem.vue'
-import TelegramBanner from '@/components/TelegramBanner.vue'
-import LoginForm from '@/components/LoginForm.vue'
-import AuthModal from '@/components/AuthModal.vue'
+
 import type { Activity } from '@/types/activity'
 
-import type { User } from '@/types/user'
-import type { RegisterPayload,LoginPayload } from '@/types/auth'
-import type { NavItem } from '@/types/nav'
-
-
-const authStore = useAuthStore()
 const router = useRouter()
 
 const activeTag = ref('✦ Все')
 const filterTags = ['✦ Все', '🎮 Игры', '🏃 Спорт', '🎲 Настолки', '🎬 Кино', '🍕 Еда', '🎵 Музыка']
-
-const allNavItems: NavItem[] = [
-  { id: 'feed',          title: 'Лента',          icon: LayoutGrid },
-  { id: 'activities',    title: 'Мои активности', icon: Menu,      requiresAuth: true },
-  { id: 'chats',         title: 'Чаты',            icon: MessageSquare,  requiresAuth: true },
-  { id: 'notifications', title: 'Уведомления',    icon: Bell,           requiresAuth: true, hasNotif: false },
-]
-
-const authModal = ref<'closed' | 'login' | 'register'>('closed')
 
 const activities: Activity[] = [
   {
@@ -98,50 +76,13 @@ const activities: Activity[] = [
   },
 ]
 
-const activeId = ref('feed')
-
-async function handleSubmit(data: RegisterPayload) {
-  if (authModal.value === 'login') {
-    await handleLogin({ email: data.email, password: data.password });
-  } else {
-    await handleRegister(data);
-  }
-}
-
-async function handleLogin(payload: LoginPayload) {
-  await authStore.login(payload);
-  authModal.value = 'closed';
-}
-
-async function handleRegister(payload: RegisterPayload) {
-  await authStore.register(payload);
-  authModal.value = 'closed';
-}
-
 const routeToCreate = () => {
   router.push('/create')
 }
-
-
-const currentUser = computed(() => authStore.user)
-
-const visibleItems = computed(() => {
-  return allNavItems.filter(item => {
-    if (item.requiresAuth && !currentUser.value) return false
-    return true
-  })
-})
-
 </script>
 
 <template>
-  <div class="glow-purple" />
-  
   <MainLayout>
-    <template #sidebar>
-      <AppSidebar v-model="activeId" :items="visibleItems" />
-    </template>
-  
     <div class="feed-col">
       <FeedHeader @create="routeToCreate" />
       <TagsFilter :tags="filterTags" :active="activeTag" @update="activeTag = $event" />
@@ -150,30 +91,5 @@ const visibleItems = computed(() => {
         <ActivityCard v-for="a in activities" :key="a.id" :activity="a" />
       </div>
     </div>
-  
-    <div class="right-col" v-if="currentUser">
-      <UserProfile :user="currentUser" />
-      <div class="section-title">Скоро у меня <a>Все →</a></div>
-      <template v-if="currentUser?.upcoming?.length">
-        <UpcomingItem v-for="item in currentUser.upcoming" :key="item.id" :item="item" />
-      </template>
-      <span v-else class="section-text">Пока нет запланированных активностей {{ ':(' }}</span>
-      <TelegramBanner />
-    </div>
-    <div class="right-col" v-else>
-      <LoginForm
-        @login="authModal = 'login'"
-        @register="authModal = 'register'"
-      />
-    </div>
-    <Transition name="modal">
-      <AuthModal
-        v-if="authModal !== 'closed'"
-        :mode="authModal"
-        @submit="handleSubmit"
-        @close="authModal = 'closed'"
-        @switch="authModal = authModal === 'login' ? 'register' : 'login'"
-      />    
-    </Transition>
   </MainLayout>
 </template>

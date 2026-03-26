@@ -13,3 +13,6 @@
     --text2: #8B8B9E;
     --text3: #55556A;
 }
+body .dp__theme_dark {
+  --dp-primary-color: var(--purple2);
+}

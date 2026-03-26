@@ -2,15 +2,13 @@
 import type { User } from '@/types/user'
 import TagChip from './common/TagChip.vue'
 import { computed } from 'vue';
-import { Angry,Meh,Smile, Ghost } from '@lucide/vue';
+import { getReliabilityConfig } from '@/utils/reliability'
 
 const props = withDefaults(defineProps<{ user: User }>(), {
   user: () => ({
     id: '',
-    name: 'Аноним',
-    handle: 'user',
-    city: '',
-    initials: '?',
+    username: 'Аноним',
+    avatar:'',
     stats: { organized: 0, participated: 0, rating: 0 },
     reliability: 0,
     tags: [],
@@ -20,45 +18,20 @@ const props = withDefaults(defineProps<{ user: User }>(), {
 
 const reliability = computed(() => props.user?.reliability ?? 0)
 
-const reliabilityConfig = computed(() => {
-  if (reliability.value === 0) return {
-    color: 'var(--text3)',
-    bg: 'rgba(255, 255, 255, 0.03)',
-    border: 'rgba(255, 255, 255, 0.07)',
-    label: 'Надёжность — ещё не участвовал ни в чём',
-    icon: Ghost
-  }
-  if (reliability.value >= 90) return {
-    color: 'var(--mint)',
-    bg: 'rgba(6, 214, 160, 0.07)',
-    border: 'rgba(6, 214, 160, 0.15)',
-    label: 'Надёжность — приходит когда говорит',
-    icon: Smile
-  }
-  if (reliability.value >= 70) return {
-    color: 'var(--yellow)',
-    bg: 'rgba(245, 158, 11, 0.07)',
-    border: 'rgba(245, 158, 11, 0.15)',
-    label: 'Надёжность — иногда пропускает',
-    icon: Meh
-  }
-  return {
-    color: 'var(--red)',
-    bg: 'rgba(239, 68, 68, 0.07)',
-    border: 'rgba(239, 68, 68, 0.15)',
-    label: 'Низкая надёжность — часто не приходит',
-    icon: Angry
-  }
-})
+const reliabilityConfig = computed(() => getReliabilityConfig(reliability.value))
 </script>
 
 <template>
   <div class="profile-block">
     <div class="profile-top">
-      <div class="profile-avatar">{{ props.user?.initials ?? '?' }}</div>
+      <div class="profile-avatar" v-if="props.user?.avatar">
+        <img :src="props.user?.avatar" :alt="props.user?.username" />
+      </div>
+      <div class="profile-avatar" v-else>
+        ?
+      </div>
       <div>
-        <div class="profile-name">{{ props.user?.name ?? 'Аноним' }}</div>
-        <div class="profile-handle">@{{ props.user?.handle ?? 'user' }} · {{ props.user?.city ?? '' }}</div>
+        <div class="profile-name">{{ props.user?.username ?? 'Аноним' }}</div>
       </div>
     </div>
 
