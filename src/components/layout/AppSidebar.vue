@@ -30,7 +30,9 @@ onUnmounted(() => window.removeEventListener('click', closeSettings))
 
 <template>
   <nav class="sidebar">
-    <div class="logo">H</div>
+    <router-link to="/">
+      <div class="logo">H</div>
+    </router-link>
 
     <div
       v-for="item in items"
@@ -63,7 +65,7 @@ onUnmounted(() => window.removeEventListener('click', closeSettings))
             <div class="popover-header">Настройки</div>
             <div class="popover-content">
               <slot name="settings-menu">
-                <div class="menu-item">Профиль</div>
+                <router-link class="menu-item" to="/profile">Профиль</router-link>
                 <div class="menu-item">Тема: Темная</div>
                 <div class="menu-item">Язык: RU</div>
                 <div class="menu-divider" />

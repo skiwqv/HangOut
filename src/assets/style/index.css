@@ -16,6 +16,7 @@
 @import './components/profile.css';
 @import './components/upcoming.css';
 @import './components/modal.css';
+@import './components/form.css';
 /* ── UI ── */
 @import './ui/avatars.css';
 @import './ui/seats.css';

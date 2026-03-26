@@ -1,3 +1,4 @@
+
 export interface UpcomingActivity {
   id: string
   title: string
@@ -11,9 +12,10 @@ export interface UpcomingActivity {
 export interface User {
   id: string
   username: string
-  handle: string
-  city: string
-  initials: string
+  email: string
+  bio:string
+  avatar?:string
+  banner:string
   stats: {
     organized: number
     participated: number
@@ -22,4 +24,10 @@ export interface User {
   reliability: number
   tags: string[]
   upcoming: UpcomingActivity[]
+}
+
+export interface updateUserPayload {
+  username: string,
+  email: string,
+  bio: string,
 }

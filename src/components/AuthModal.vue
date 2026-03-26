@@ -25,10 +25,18 @@ const loginSchema = z.object({
 })
 
 const registerSchema = z.object({
-  email: z.string().min(1, 'Поле не может быть пустым').email('Некорректный email'),
+  email: z.string()
+    .min(1, 'Поле не может быть пустым')
+    .email('Некорректный email'),
   password: passwordRules,
-  username: z.string().min(1, 'Поле не может быть пустым'),
-  confirm: z.string().min(1, 'Поле не может быть пустым'),
+  
+  username: z.string()
+    .trim() 
+    .min(1, 'Поле не может быть пустым')
+    .regex(/^[a-zA-Z0-9_]+$/, 'Только лат. буквы, цифры и подчеркивание (_)'),
+    
+  confirm: z.string()
+    .min(1, 'Поле не может быть пустым'),
 }).refine(data => data.password === data.confirm, {
   message: 'Пароли не совпадают',
   path: ['confirm'],
@@ -43,7 +51,7 @@ const { handleSubmit, errors } = useForm({
   initialValues: computed(() =>
     props.mode === 'login'
       ? { email: '', password: '' }
-      : { email: '', password: '', username: '', confirm: '' }
+      : { email: '', password: '', username: '', }
   )
 })
 
@@ -53,11 +61,16 @@ const { value: password, handleBlur: blurPassword } = useField('password')
 const { value: confirm, handleBlur: blurConfirm } = useField('confirm')
 
 const submitForm = handleSubmit((values) => {
-  console.log('handleSubmit fired', values) 
-  emit('submit', values as RegisterPayload)
+  // Вытаскиваем confirm отдельно, а всё остальное собираем в объект payload
+  const { confirm, ...payload } = values;
+
+  console.log('Готовый payload без confirm:', payload); 
+  
+  // Отправляем чистый payload
+  emit('submit', payload as RegisterPayload);
 }, (errors) => {
-  console.log('validation errors', errors) 
-})
+  console.log('validation errors', errors);
+});
 </script>
 
 <template>
