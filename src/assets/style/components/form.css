@@ -196,3 +196,133 @@
   gap: 10px;
   padding-bottom: 40px;
 }
+
+/* ── СТИЛИ ДЛЯ SELECT ── */
+
+.field-input select {
+  width: 100%;
+  background-color: transparent; /* Фон берется от родительского .field-input */
+  border: none;
+  outline: none;
+  font-family: inherit;
+  font-size: 14px;
+  color: var(--text);
+  cursor: pointer;
+  
+  /* Убиваем стандартный системный вид (обязательно!) */
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  
+  /* Добавляем свою красивую стрелочку через base64 SVG */
+  /* Если хочешь изменить цвет стрелочки, поменяй %23888888 на нужный HEX (где %23 это #) */
+  background-image: url("data:image/svg+xml,%3Csvg width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%23888888' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' xmlns='http://www.w3.org/2000/svg'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right center; /* Если в .field-input уже есть padding, оставь так */
+  background-size: 14px;
+  
+  /* Отступ справа, чтобы длинный текст не наезжал на стрелочку */
+  padding-right: 28px;
+}
+
+/* Стилизация самих пунктов выпадающего списка */
+/* Внимание: Браузеры очень неохотно стилизуют <option>, но цвета задать можно */
+.field-input select option {
+  background: var(--bg3); /* Подстраиваем под темную тему */
+  color: var(--text);
+  font-size: 14px;
+}
+
+/* Делаем так, чтобы пункт "Выберите категорию" (пустой value) выглядел как плейсхолдер */
+.field-input select:invalid,
+.field-input select option[value=""] {
+  color: var(--text3);
+}
+
+/* ── БРОНЕБОЙНЫЕ СТИЛИ ДЛЯ VUE-MULTISELECT ── */
+
+/* 1. Сам селект и его обертка */
+.field-input .multiselect {
+  min-height: auto;
+  background: transparent;
+}
+
+.field-input .multiselect__tags {
+  background: transparent;
+  border: none;
+  padding: 0;
+  min-height: auto;
+  display: flex;
+  align-items: center;
+}
+
+/* 2. Текст выбранного значения */
+.field-input .multiselect__single {
+  background: transparent;
+  color: var(--text);
+  font-size: 14px;
+  margin: 0;
+  padding: 0;
+  line-height: normal;
+}
+
+/* 3. Плейсхолдер ("Выберите категорию") */
+.field-input .multiselect__placeholder {
+  color: var(--text3);
+  font-size: 14px;
+  margin: 0;
+  padding: 0;
+}
+
+/* 4. Иконка стрелочки */
+.field-input .multiselect__select {
+  height: 100%;
+  top: 0;
+  right: -8px; 
+  padding: 0;
+}
+.field-input .multiselect__select::before {
+  border-color: var(--text3) transparent transparent;
+}
+
+/* 5. ── ВЫПАДАЮЩИЙ СПИСОК (ДРОПДАУН) ── */
+.field-input .multiselect__content-wrapper {
+  background: var(--bg3); 
+  border: 1px solid var(--border); 
+  border-radius: 12px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4); 
+  margin-top: 12px; 
+  border-top: none !important;
+  
+  /* Хак для ширины, чтобы он перекрывал внутренние отступы .field-input */
+  left: -14px; 
+  width: calc(100% + 28px);
+}
+
+/* Пункты списка */
+.field-input .multiselect__option {
+  color: var(--text2);
+  font-size: 14px;
+  padding: 10px 14px;
+  min-height: auto;
+  transition: all 0.15s ease;
+}
+
+/* Наведение на пункт (Hover) */
+.field-input .multiselect__option--highlight {
+  background: rgba(124, 58, 237, 0.1); 
+  color: var(--purple2);
+}
+
+/* Уже выбранный пункт */
+.field-input .multiselect__option--selected {
+  background: rgba(124, 58, 237, 0.15);
+  color: var(--text);
+  font-weight: 500;
+}
+
+/* Выбранный пункт при наведении */
+.field-input .multiselect__option--selected.multiselect__option--highlight {
+  background: rgba(124, 58, 237, 0.2);
+  color: var(--text);
+}

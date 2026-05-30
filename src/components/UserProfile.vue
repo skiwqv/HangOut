@@ -6,8 +6,11 @@ import { getReliabilityConfig } from '@/utils/reliability'
 
 const props = withDefaults(defineProps<{ user: User }>(), {
   user: () => ({
-    id: '',
+    id: 0,
     username: 'Аноним',
+    email: '',
+    bio: '',
+    banner: '',
     avatar:'',
     stats: { organized: 0, participated: 0, rating: 0 },
     reliability: 0,
@@ -22,7 +25,10 @@ const reliabilityConfig = computed(() => getReliabilityConfig(reliability.value)
 </script>
 
 <template>
-  <div class="profile-block">
+  <div class="profile-block"
+  :class="{ 'profile-block--with-banner': user?.banner }"
+  :style="user?.banner ? { '--user-banner': `url(${user.banner})` } : {}"
+  >
     <div class="profile-top">
       <div class="profile-avatar" v-if="props.user?.avatar">
         <img :src="props.user?.avatar" :alt="props.user?.username" />

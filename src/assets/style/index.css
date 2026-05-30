@@ -17,11 +17,13 @@
 @import './components/upcoming.css';
 @import './components/modal.css';
 @import './components/form.css';
+@import './components/activity.css';
 /* ── UI ── */
 @import './ui/avatars.css';
 @import './ui/seats.css';
 @import './ui/tg-banner.css';
 @import './ui/notif.css';
+@import './ui/toast.css';
 
 /* ── ANIMATIONS ── */
 @import './animations.css';

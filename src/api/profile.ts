@@ -6,10 +6,12 @@ interface GetAvatar {
 }
 
 export const profileApi = {
-  changeAvatar(avatar: File) {
+changeAvatar(avatar: File | null) {
     const formData = new FormData();
     
-    formData.append('file', avatar);
+    if (avatar) {
+      formData.append('file', avatar);
+    }
 
     return api.patch<GetAvatar>('/user/avatar', formData, {
       headers: {
@@ -17,10 +19,13 @@ export const profileApi = {
       }
     });
   },
-    changeBanner(banner: File) {
+
+  changeBanner(banner: File | null) {
     const formData = new FormData();
     
-    formData.append('file', banner);
+    if (banner) {
+      formData.append('file', banner);
+    }
 
     return api.patch('/user/banner', formData, {
       headers: {

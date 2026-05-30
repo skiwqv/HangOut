@@ -3,7 +3,7 @@ import { useForm, useField } from 'vee-validate'
 import { toTypedSchema } from '@vee-validate/zod'
 import { z } from 'zod'
 import { computed } from 'vue'
-import { User } from '@lucide/vue'
+import { User, X, LogIn, Mail, Lock } from '@lucide/vue'
 import type { RegisterPayload } from '@/types/auth'
 
 const emit = defineEmits<{
@@ -61,16 +61,11 @@ const { value: password, handleBlur: blurPassword } = useField('password')
 const { value: confirm, handleBlur: blurConfirm } = useField('confirm')
 
 const submitForm = handleSubmit((values) => {
-  // Вытаскиваем confirm отдельно, а всё остальное собираем в объект payload
   const { confirm, ...payload } = values;
 
-  console.log('Готовый payload без confirm:', payload); 
   
-  // Отправляем чистый payload
   emit('submit', payload as RegisterPayload);
-}, (errors) => {
-  console.log('validation errors', errors);
-});
+},);
 </script>
 
 <template>
@@ -78,18 +73,12 @@ const submitForm = handleSubmit((values) => {
     <div class="modal">
   
       <button class="modal-close" @click="emit('close')">
-        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-          <path d="M18 6 6 18M6 6l12 12" />
-        </svg>
+        <X :size="16" />
       </button>
   
       <div class="modal-header">
         <div class="modal-icon">
-          <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-            <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4" />
-            <polyline points="10 17 15 12 10 7" />
-            <line x1="15" y1="12" x2="3" y2="12" />
-          </svg>
+          <LogIn :size="18" />
         </div>
         <div class="modal-title">
           {{ props.mode === 'login' ? 'Добро пожаловать' : 'Создать аккаунт' }}
@@ -103,10 +92,7 @@ const submitForm = handleSubmit((values) => {
         <div class="field">
           <label class="field-label">Email</label>
           <div class="field-input" :class="{ 'field-input--error': errors.email }">
-            <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-              <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
-              <polyline points="22,6 12,13 2,6" />
-            </svg>
+            <Mail :size="14" />
             <input v-model="email" type="email" placeholder="your@email.com" @blur="blurEmail" />
           </div>
           <span class="field-error" v-if="errors.email">{{ errors.email }}</span>
@@ -122,10 +108,7 @@ const submitForm = handleSubmit((values) => {
         <div class="field">
           <label class="field-label">Пароль</label>
           <div class="field-input" :class="{ 'field-input--error': errors.password }">
-            <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-              <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
-              <path d="M7 11V7a5 5 0 0 1 10 0v4" />
-            </svg>
+            <Lock :size="14" />
             <input v-model="password" type="password" placeholder="••••••••" @blur="blurPassword" />
           </div>
           <span class="field-error" v-if="errors.password">{{ errors.password }}</span>
@@ -134,10 +117,7 @@ const submitForm = handleSubmit((values) => {
         <div class="field" v-if="props.mode === 'register'">
           <label class="field-label">Повторить пароль</label>
           <div class="field-input" :class="{ 'field-input--error': errors.confirm }">
-            <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-              <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
-              <path d="M7 11V7a5 5 0 0 1 10 0v4" />
-            </svg>
+            <Lock :size="14" />
             <input v-model="confirm" type="password" placeholder="••••••••" @blur="blurConfirm" />
           </div>
           <span class="field-error" v-if="errors.confirm">{{ errors.confirm }}</span>

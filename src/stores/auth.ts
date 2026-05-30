@@ -4,13 +4,14 @@ import { authApi } from '@/api/auth'
 import type { User } from '@/types/user'
 import type { RegisterPayload, LoginPayload } from '@/types/auth'
 import { useRouter } from 'vue-router'
-
+import { useToastStore } from './toasts'
 
 export const useAuthStore = defineStore('auth', () => {
   const token = ref<string | null>(localStorage.getItem('access_token'))
   const user = ref<User | null>(null)
   const router = useRouter()
   const authModalMode = ref<'closed' | 'login' | 'register'>('closed')
+  const toastStore = useToastStore()
 
   const isLoggedIn = computed(() => !!token.value)
 
@@ -26,6 +27,7 @@ export const useAuthStore = defineStore('auth', () => {
     
     await getUser()
     setModal('closed') 
+    toastStore.success('Вы успешно вошли')
   }
 
   async function register(payload: RegisterPayload) {
@@ -33,6 +35,7 @@ export const useAuthStore = defineStore('auth', () => {
     
     await getUser()
     setModal('closed')
+    toastStore.success('Вы успешно зарегистрировались')
   }
   
   async function getUser() {
@@ -53,6 +56,7 @@ export const useAuthStore = defineStore('auth', () => {
       localStorage.removeItem('access_token')
       router.push('/')
       authModalMode.value = 'closed'
+      toastStore.success('Вы успешно вышли')
     }
   }
   
