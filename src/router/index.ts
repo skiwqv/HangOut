@@ -15,7 +15,8 @@ const routes = [
 {
   path: '/activity/:id', 
   name: 'activity-detail',
-  component: () => import('@/views/ActivityDetailView.vue')
+  component: () => import('@/views/ActivityDetailView.vue'),
+  meta: { requiresAuth: true }
 },
 {
   path: '/activity/:id/edit',

@@ -1,5 +1,5 @@
 export type ActivityFormat = 'online' | 'offline'
-export type ActivityAccess = 'open' | 'request'
+export type ActivityType = 'open' | 'close'
 
 export interface ActivityParticipant {
   id: string
@@ -7,21 +7,49 @@ export interface ActivityParticipant {
   gradient: string
 }
 
+export interface Activities {
+  items: Activity[]
+  next_cursor: string
+  has_more: boolean
+}
+
 export interface Activity {
-  id: string
   title: string
+  type: ActivityType
   format: ActivityFormat
-  access?: ActivityAccess
-  emoji: string
-  coverGradient: string
-  datetime: string
-  location?: string
-  seats: { taken: number; total: number }
+  category: string
+  extra_data: ExtraData
+  description: string
+  date: string
+  max_members: number
   tags: string[]
-  organizer: {
-    handle: string
-    initials: string
-    gradient: string
-  }
-  participants: ActivityParticipant[]
+  location: string
+  _id: string
+  creator: Creator
+  current_members: number
+  status: string
+  created_at: string
+  updated_at: string
+}
+
+export interface ExtraData {
+  category: string
+  game_name?: string
+  genre?: string
+  platform?: string
+}
+
+
+export interface Creator {
+  id: number
+  username: string
+  avatar_key: string
+  avatar_url: string
+}
+
+
+export interface Category {
+  value: string
+  name: string
+  image: string
 }

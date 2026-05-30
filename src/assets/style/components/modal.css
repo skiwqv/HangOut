@@ -90,6 +90,7 @@
     gap: 8px;
     color: var(--text3);
     transition: border-color 0.2s;
+    min-height: 40px;
 }
 
 .field-input:focus-within {
@@ -173,7 +174,7 @@
 }
 
 .settings-trigger.active {
-  color: var(--accent-color, #4f46e5); /* Цвет при открытом окне */
+  color: var(--purple); /* Цвет при открытом окне */
 }
 
 .settings-popover {
@@ -245,4 +246,75 @@
 .popover-leave-to {
   opacity: 0;
   transform: translateY(10px) scale(0.95);
+}
+
+.organizer-edit-wrapper{
+    position: relative;
+}
+
+.organizer-edit-wrapper {
+  position: relative;
+  /* Добавляем inline-block, чтобы обертка была размером ровно с иконку */
+  display: inline-block; 
+}
+
+.settings-trigger {
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px; /* Даем зону для клика вокруг иконки */
+  transition: background 0.2s;
+}
+
+/* Эффект нажатия на саму шестеренку */
+.settings-trigger:hover, 
+.settings-trigger.active {
+  background: var(--bg3); 
+}
+
+.avatar-menu {
+  position: absolute;
+  /* Мэджик-трик: 100% высоты родителя + 4px отступа вниз. 
+     Теперь оно всегда ровно под кнопкой! */
+  top: calc(100% + 4px); 
+  
+  /* Обычно такие менюшки прижимают к правому краю кнопки */
+  right: 0; 
+  left: auto; /* Сбрасываем твой left: 0 */
+  
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 6px;
+  min-width: 180px; /* Чуть расширил, чтобы текст не слипался */
+  z-index: 50;
+  
+  /* Добавим легкую тень, чтобы меню визуально "оторвалось" от фона */
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); 
+}
+
+.avatar-menu-item {
+  padding: 10px 12px;
+  font-size: 14px;
+  color: var(--text); /* Лучше основной текст, text2 бывает тускловат */
+  cursor: pointer;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: background 0.15s, color 0.15s;
+}
+
+.avatar-menu-item:hover {
+  background: var(--bg3);
+}
+
+.avatar-menu-item--danger {
+  color: var(--red);
+}
+
+/* Бонус: при наведении на удаление делаем фон слегка красноватым */
+.avatar-menu-item--danger:hover {
+  background: rgba(255, 59, 48, 0.1); /* Если var(--red) = #ff3b30 */
 }

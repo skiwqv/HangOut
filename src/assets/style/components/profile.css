@@ -360,20 +360,20 @@
   resize: none;
   outline: none;
   transition: border-color 0.2s;
-/* Оставляем запрет на ручное растягивание за уголок */
   resize: none; 
   outline: none;
   transition: border-color 0.2s;
   
-  /* ДОБАВЛЯЕМ: */
-  overflow: hidden; /* Прячем дефолтный скролл */
-  min-height: 44px; /* Минимальная высота (например, в 1 строчку) */  
+  overflow: hidden; 
+  min-height: 44px;  
 }
 
 .profile-bio-textarea:focus {
   border-color: var(--purple);
 }
-
+.profile-bio-textarea::placeholder {
+  color: var(--text3);
+}
 .profile-stats-grid {
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
@@ -480,4 +480,39 @@
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+.profile-block {
+  background: var(--card); /* Твой мощный базовый фон */
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  padding: 20px;
+  margin-bottom: 20px;
+  
+  /* Добавляем это: */
+  position: relative;
+  overflow: hidden; /* Чтобы баннер не торчал за скругленные углы 18px */
+}
+
+/* Создаем слой с картинкой ТОЛЬКО если есть баннер */
+.profile-block--with-banner::before {
+  content: '';
+  position: absolute;
+  inset: 0; /* Растягиваем на всю ширину и высоту (заменяет top:0; left:0; bottom:0; right:0;) */
+  background-image: var(--user-banner);
+  background-size: cover;
+  background-position: center;
+  
+  /* МАГИЯ ЗДЕСЬ: Делаем баннер прозрачным на 85%. 
+     Остальные 85% просвечивают твой var(--card) */
+  opacity: 0.15; 
+  
+  z-index: 0; /* Кладем на самое дно */
+  pointer-events: none; /* Чтобы картинка не мешала кликать по кнопкам профиля */
+}
+
+/* Обязательно: поднимаем ВЕСЬ контент внутри блока над баннером */
+.profile-block > * {
+  position: relative;
+  z-index: 1;
 }

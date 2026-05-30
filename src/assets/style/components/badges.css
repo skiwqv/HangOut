@@ -36,7 +36,12 @@
     align-items: center;
     gap: 4px;
 }
-
+.badge-category {
+  background: rgba(157, 95, 245, 1);
+  color: var(--white);
+  border: 1px solid rgba(157, 95, 245, 0.3);
+  font-size: 14px;
+}
 .reliability {
     display: flex;
     align-items: center;

@@ -84,7 +84,7 @@
     color: var(--purple2);
 }
 
-.tag-chip.active {
+.tag-chip--active {
     background: rgba(124, 58, 237, 0.15);
     border-color: var(--purple);
     color: var(--purple2);

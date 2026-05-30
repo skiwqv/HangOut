@@ -2,8 +2,10 @@ import { profileApi } from './../api/profile';
 import { defineStore } from 'pinia'
 import { useAuthStore } from './auth'
 import type { updateUserPayload } from '../types/user';
+import { useToastStore } from './toasts';
 export const useProfileStore = defineStore('profile', () => {
  const authStore = useAuthStore()
+ const toastStore = useToastStore()
 
   async function changeAvatar(avatar: File) {
     const { data } = await profileApi.changeAvatar(avatar)
@@ -22,6 +24,15 @@ export const useProfileStore = defineStore('profile', () => {
     
     await authStore.getUser()
   }
+
+  async function deleteBanner(nullValue: null) {
+    await profileApi.changeBanner(nullValue) 
+  }
+
+  async function deleteAvatar(nullValue: null) {
+    await profileApi.changeAvatar(nullValue) 
+  }
+
   async function updateUser(payload:updateUserPayload) {
     const { data } = await profileApi.updateUser(payload)
     if(authStore.user){
@@ -31,12 +42,15 @@ export const useProfileStore = defineStore('profile', () => {
     }
     
     await authStore.getUser()
+    toastStore.success('Профиль обновлен')
   }
 
   
   return { 
     changeAvatar,
     updateUser,
-    changeBanner
+    changeBanner,
+    deleteBanner,
+    deleteAvatar
   }
 })
